@@ -1,0 +1,14 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        python /var/www/gateway_lora_service/stm32on.py
+        python /var/www/gateway_lora_service/lora_service.py &
+    ;;
+    stop)
+
+    ;;
+
+esac
+
+exit 0

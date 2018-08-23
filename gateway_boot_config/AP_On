@@ -1,0 +1,75 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          scriptname
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+start()
+{	
+	# eth1 enable
+	ifconfig eth0 up
+	dhclient eth0
+
+	modprobe -r dhd
+	modprobe dhd op_mode=2
+	ifconfig wlan0 192.168.88.1 up
+	dnsmasq -C /etc/dnsmasq.conf
+	./etc/init.d/aproute.sh
+	hostapd /etc/hostapd/hostapd.conf -B
+	
+	#sleep 20
+
+	# web server open
+	#python3 /var/www/gatewayToOpenCPN/webserver.py &
+
+	#sleep 10	
+	
+	# logger program
+	#/var/www/risinghf/lora_gateway/reset_lgw.sh start 46
+	#sleep 10
+	#/var/www/risinghf/lora_gateway/util_pkt_logger/util_pkt_logger &	
+	
+}
+
+stop()
+{
+	systemctl stop hostapd
+	systemctl stop dnsmasq
+	modprobe -r dhd
+	modprobe dhd op_mode=0
+	ifconfig wlan0 up
+	if [ -f "/usr/lib/systemd/system/wpa_supplicant.service" ]; then
+		systemctl restart wpa_supplicant
+	fi
+}
+
+restart()
+{
+    stop
+    start
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo "Usage:$0 {start|stop|restart}"
+esac
+
+exit 0
+
+
