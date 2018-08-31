@@ -1,4 +1,8 @@
 import requests
+import time
 
-r = requests.get('http://127.0.0.1:8008/')
-print(r.text)
+while True:
+    r = requests.get('http://192.168.0.21:8008/')
+    print(r.text)
+
+    time.sleep(10)

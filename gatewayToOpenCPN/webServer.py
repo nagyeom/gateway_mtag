@@ -3,23 +3,31 @@ from flask import request
 import requests
 import json
 import os
+import logging
+import pymysql
 import DB_func
 
-db = DB_func.MySQLSet()
 
 app = Flask(__name__)
 app.config['DEBUG'] = False
+
+logging.basicConfig(filename='/var/www/gatewayToOpenCPN/gps_log.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 @app.route("/", methods=['GET','POST'])
 def index():
     cpn_str = None
     if request.method == 'GET':
-        log_list = db.selectTotalGPS()
+        db = DB_func.MySQLSet()
+        sql = "SELECT * FROM gps_log ORDER BY time DESC LIMIT 10"
+        log_list = db.selectGPS(sql)
         if log_list is not None:
             #cpn_str = ''.join(str(e) for e in log_list)
             #print(log_list)
             cpn_dict = {'items': log_list}
-            print(type(cpn_dict))
+            print("index:",cpn_dict)
+            logging.info('index: %s' % str(cpn_dict))
+
+        db.closeDB()
         return json.dumps(cpn_dict)
 
 
@@ -28,35 +36,19 @@ def curlc():
     log_list = None
     cpn_dict = None
     if request.headers['Content-Type']== 'application/json':
+        db = DB_func.MySQLSet()
         # print(1)
         log = request.data.decode('utf-8')
-        #print(log,type(log))
+        print("curlc:",log,type(log))
 
         if log is not None:
             cpn_dict = parseJSON(log)
-            #print(cpn_dict)
-
+            print(cpn_dict)
+            logging.info('curlc: %s' % str(cpn_dict))
             for item in cpn_dict['items']:
                 db.insertGPS(item['tag_id'],item['lat'],item['lon'],item['time'])
+        db.closeDB()
     return ''
-
-def readPayload():
-    """
-    payload file을 CRC 값에 맞춰 읽어오는 함수
-    """
-    log_path = '/var/www/risinghf/lora_gateway/util_pkt_logger/payload.log'
-    log_list =[]
-    try:
-        with open(log_path,'r') as f:
-            log = f.readlines()
-            for data in log:
-                log_list.append(data[:-1])
-            os.system('cat /dev/null > %s'%log_path)
-    except:
-        log_list = None
-
-    return log_list
-
 
 def parseJSON(data):
     """
@@ -65,8 +57,16 @@ def parseJSON(data):
     log = data
     cpn_list = []
 
-    print(len(log),log)
+    #print(len(log),log)
     # for util_pkt_logger
+    # time = log[0:19]
+    # tag_id = log[20:22]
+    #
+    # # full data
+    # temp_lat = log[22:32]
+    # temp_lon = log[32:-1]
+
+    # for lora_receiver
     time = log[1:20]
     tag_id = log[21:23]
 
@@ -88,7 +88,7 @@ def getLatLon(data):
     """
     conversion_val = None
     name = data[0:2]
-    print(len(data))
+    # print(len(data))
     if name == 'FD' or name == 'FE':
         degrees = int(data[2:4],16)
         minutes = int(data[4:6],16)
@@ -101,5 +101,5 @@ def getLatLon(data):
     return conversion_val
 
 if __name__ == '__main__':
-
     app.run(host='0.0.0.0',port=8008)
+

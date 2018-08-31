@@ -3,22 +3,44 @@ import pymysql
 class MySQLSet():
     def __init__(self):
         self.conn = pymysql.connect(host='localhost', user='root', password='123456', db='mysql', charset='utf8')
-        self.select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
+        #select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
         #self.insert_curs = self.conn.cursor()
 
-    def selectTotalGPS(self):
-        sql = "select * from gps_log"
-        self.select_curs.execute(sql)
-        rows = self.select_curs.fetchall()
-
+    def selectGPS(self,sql):
+        rows = None
+        select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
+        #sql = "select * from gps_log"
+        try:
+            select_curs.execute(sql)
+        except:
+            pass
+        else:
+            rows = select_curs.fetchall()
+        finally:
+            select_curs.close()
+            print("==select ok==")
         #self.conn.close()
         return rows
 
+
     def insertGPS(self,tag_id,lat,lon,time):
+        select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
         sql = "insert into gps_log(tag_id,lat,lon,time) values (%s, %s, %s, %s)"
-        self.select_curs.execute(sql,(tag_id,lat,lon,time))
-        self.conn.commit()
+        try:
+            select_curs.execute(sql,(tag_id,lat,lon,time))
+        except:
+            pass
+        finally:
+            self.conn.commit()
+            select_curs.close()
         #self.conn.close()
+
+    def deleteGPS(self):
+        select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
+        sql = "delete from gps_log"
+        select_curs.execute(sql)
+        self.conn.commit()
+        select_curs.close()
 
     def closeDB(self):
         self.conn.close()
