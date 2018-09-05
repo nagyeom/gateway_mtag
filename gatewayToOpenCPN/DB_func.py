@@ -6,6 +6,8 @@ class MySQLSet():
         #select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
         #self.insert_curs = self.conn.cursor()
 
+
+
     def selectGPS(self,sql):
         rows = None
         select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
@@ -34,6 +36,20 @@ class MySQLSet():
             self.conn.commit()
             select_curs.close()
         #self.conn.close()
+
+    def insertDummyGPS(self,sql):
+        """
+        ready-made gps_log dummy data
+        """
+        select_curs = self.conn.cursor(pymysql.cursors.DictCursor)
+        print(sql)
+        try:
+            select_curs.execute(sql)
+        except:
+            pass
+        finally:
+            self.conn.commit()
+            select_curs.close()
 
     def deleteGPS(self):
         select_curs = self.conn.cursor(pymysql.cursors.DictCursor)

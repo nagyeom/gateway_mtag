@@ -34,8 +34,8 @@ def loar_receiver():
             # elif type(temp_data) == str:
             #     data = temp_data
 
-            data = setDummyGPS()
-            #data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
+            #data = setDummyGPS()
+            data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
             data = data.upper()
 
             if not data or data[0] != 'A':
@@ -46,20 +46,20 @@ def loar_receiver():
             now_time = "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
             web_data = "%s %s"%(now_time,data)
-            print(web_data)
+            #print(web_data)
             if data[2:4] =='FD' or data[12:14]=='FE':
                 r = requests.post('http://%s:8008/curlc'%url, json=web_data)
 
-            #logging.info('lora: %s' % data)
+            logging.info('lora: %s' % data)
         except Exception as e:
-            #logging.error(e, exc_info=True)
+            logging.error(e, exc_info=True)
             pass
 
-        time.sleep(5)##########
+        #time.sleep(5)##########
 
 def setDummyGPS():
     dummy_list = ['A1FD23090624FE810D0D2D','A1FD23090A1DFE810D0F31','A1FD23090D4EFE810D0E1D',
-                  'A1FD23091162FE810D0C56','A1FD23091618FE810D0B0C','A1FD35091A4FFE810D0B0C']
+                  'A1FD23091162FE810D0C56','A1FD23091618FE810D0B0C','A1FD23091A4FFE810D0B0C']
     i = randint(0,5)
     #dummy_tuple =()
     # if count == 0:

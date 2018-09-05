@@ -13,9 +13,13 @@ app.config['DEBUG'] = False
 
 logging.basicConfig(filename='/var/www/gatewayToOpenCPN/gps_log.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
 
+#dummy_count = 0
+#dummy_list = []
+
 @app.route("/", methods=['GET','POST'])
 def index():
     cpn_str = None
+    # global dummy_count
     if request.method == 'GET':
         db = DB_func.MySQLSet()
         sql = "SELECT * FROM gps_log ORDER BY time DESC LIMIT 10"
@@ -35,6 +39,8 @@ def index():
 def curlc():
     log_list = None
     cpn_dict = None
+    #global dummy_count
+    #global dummy_list
     if request.headers['Content-Type']== 'application/json':
         db = DB_func.MySQLSet()
         # print(1)
@@ -45,8 +51,16 @@ def curlc():
             cpn_dict = parseJSON(log)
             print(cpn_dict)
             logging.info('curlc: %s' % str(cpn_dict))
+            # curlc
             for item in cpn_dict['items']:
                 db.insertGPS(item['tag_id'],item['lat'],item['lon'],item['time'])
+
+            # dummy db
+            # db.insertDummyGPS(dummy_list[dummy_count])
+            # dummy_count += 1
+            # if dummy_count == len(dummy_list):
+            #     dummy_count = 0
+
         db.closeDB()
     return ''
 
@@ -99,6 +113,18 @@ def getLatLon(data):
         conversion_val = str(degrees+(minutes/60) + (float(seconds)/3600))
 
     return conversion_val
+
+# def setDummy():
+#     dummy_path = '/var/www/gatewayToOpenCPN/sample_gps_log.txt'
+#     global dummy_list
+#     global dummy_count
+#     f = open(dummy_path, 'r')
+#     while True:
+#         line = f.readline().replace(';\n', '')
+#         dummy_list.append(line)
+#         if not line or len(line) == 0: break
+#     f.close()
+#     dummy_list[0] = dummy_list[0][1:]
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=8008)
