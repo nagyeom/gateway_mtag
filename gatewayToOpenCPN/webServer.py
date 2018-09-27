@@ -73,20 +73,20 @@ def parseJSON(data):
 
     #print(len(log),log)
     # for util_pkt_logger
-    # time = log[0:19]
-    # tag_id = log[20:22]
-    #
-    # # full data
-    # temp_lat = log[22:32]
-    # temp_lon = log[32:-1]
-
-    # for lora_receiver
-    time = log[1:20]
-    tag_id = log[21:23]
+    time = log[0:19]
+    tag_id = log[20:22]
 
     # full data
-    temp_lat = log[23:33]
-    temp_lon = log[33:-2]
+    temp_lat = log[22:32]
+    temp_lon = log[32:-1]
+
+    # for lora_receiver
+    # time = log[1:20]
+    # tag_id = log[21:23]
+    #
+    # # full data
+    # temp_lat = log[23:33]
+    # temp_lon = log[33:-2]
     lat = getLatLon(temp_lat)
     lon = getLatLon(temp_lon)
 

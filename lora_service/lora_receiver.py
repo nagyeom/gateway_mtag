@@ -34,8 +34,8 @@ def loar_receiver():
             # elif type(temp_data) == str:
             #     data = temp_data
 
-            #data = setDummyGPS()
-            data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
+            data = setDummyGPS()
+            #data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
             data = data.upper()
 
             if not data or data[0] != 'A':
