@@ -34,23 +34,24 @@ def loar_receiver():
             # elif type(temp_data) == str:
             #     data = temp_data
 
-            data = setDummyGPS()
-            #data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
+            #data = setDummyGPS()
+            data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
             data = data.upper()
-
-            if not data or data[0] != 'A':
+            print(data)
+            #if not data or data[0] != 'A':
             #if not data or data[0] != 'A' or data[2:4] != 'FD':
-                continue
+            #    continue
 
-            now = time.localtime()
-            now_time = "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
 
-            web_data = "%s %s"%(now_time,data)
-            #print(web_data)
-            if data[2:4] =='FD' or data[12:14]=='FE':
-                r = requests.post('http://%s:8008/curlc'%url, json=web_data)
-
-            logging.info('lora: %s' % data)
+            # now = time.localtime()
+            # now_time = "%04d-%02d-%02d %02d:%02d:%02d" % (now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec)
+            #
+            # web_data = "%s %s"%(now_time,data)
+            # #print(web_data)
+            # if data[2:4] =='FD' or data[12:14]=='FE':
+            #     r = requests.post('http://%s:8008/curlc'%url, json=web_data)
+            #
+            # logging.info('lora: %s' % data)
         except Exception as e:
             logging.error(e, exc_info=True)
             pass
