@@ -1,8 +1,9 @@
 import requests
 import time
+import json
 
 while True:
-    r = requests.get('http://192.168.0.21:8008/')
-    print(r.text)
+    data = 'A1FD23090624FE810D0D2D'
+    r = requests.post('http://127.0.0.1:8008/curlc',json=json.dumps(data))
 
-    time.sleep(10)
+    time.sleep(5)
