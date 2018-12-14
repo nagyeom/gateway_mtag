@@ -21,8 +21,8 @@ def lora_receiver():
     while True:
         try:
             # 샘플 데이터
-            #data = setDummyData()
-            data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
+            data = setDummyData()
+            #data = ser.readline().decode('utf8').replace(' ', '').replace('\n', '')
             data = data.upper()
 
             if not data or data[0:2] != 'EF':
@@ -43,7 +43,9 @@ def setDummyData():
     테스트용 더미데이터
     """
     dummy_list = ['EF010143802E00016741B4000167D6B10001673CB1000167395E000167A861000167395E00011F567D0001B101F50001567D6B0064FF',
-                  'EF0201448109FD230D3623FE81043A1E0064FF']
+                  'EF0201448109FD230D3623FE81043A1E0064FF','EF0201448109FD23090624FE810D0D2D0064FF','EF0201448109FD23090A1DFE810D0F310064FF',
+                  'EF0201448109FD23090D4EFE810D0E1D0064FF','EF0201448109FD23091162FE810D0C560064FF','EF0201448109FD23091618FE810D0B0C0064FF',
+                  'EF0201448109FD23091A4FFE810D0B0C0064FF']
     i = randint(0, 1)
     return dummy_list[i]
 

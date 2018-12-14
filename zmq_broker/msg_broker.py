@@ -31,14 +31,16 @@ def start_zmq_server():
     while True:
         try:
             items = dict(poll.poll(1000))
-
+            #print(items)
             if items.get(backend) == zmq.POLLIN:
-                msg = backend.recv_multipart()
-                frontend.send_multipart(msg)
+                msg = backend.recv_string()
+                print(msg)
+                frontend.send_string(msg)
                 logging.info('%s' % msg)
             elif items.get(frontend) == zmq.POLLIN:
-                msg = frontend.recv()
+                msg = frontend.recv_string()
                 backend.send(msg)
+                print('backend:',msg)
         except KeyboardInterrupt:
             break
         except:

@@ -14,14 +14,14 @@ start()
 {	
 	# eth1 enable
 	ifconfig eth0 up
-	dhclient eth0
+	#dhclient eth0
 
-	modprobe -r dhd
-	modprobe dhd op_mode=2
-	ifconfig wlan0 192.168.88.1 up
-	dnsmasq -C /etc/dnsmasq.conf
-	./etc/init.d/aproute.sh
-	hostapd /etc/hostapd/hostapd.conf -B
+	#modprobe -r dhd
+	#modprobe dhd op_mode=2
+	#ifconfig wlan0 192.168.88.1 up
+	#dnsmasq -C /etc/dnsmasq.conf
+	#./etc/init.d/aproute.sh
+	#hostapd /etc/hostapd/hostapd.conf -B
 	
 	#sleep 20
 
@@ -31,10 +31,10 @@ start()
 	#sleep 10	
 	
 	# logger program
-	#/var/www/risinghf/lora_gateway/reset_lgw.sh start 46
+	/var/www/risinghf/lora_gateway/reset_lgw.sh start 46
 	#sleep 10
 	#/var/www/risinghf/lora_gateway/util_pkt_logger/util_pkt_logger &	
-	
+	/var/www/risinghf/packet_forwarder/lora_pkt_fwd/lora_pkt_fwd &
 }
 
 stop()

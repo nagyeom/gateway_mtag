@@ -3,9 +3,12 @@ from flask import request
 import requests
 import json
 import os
+import sys
 import logging
 import zmq
 from config import config
+sys.path.insert(0,'/var/www/p2p_program/')
+from p2p_mqtt import MQTTClient
 
 
 
@@ -45,24 +48,35 @@ def curlc():
     #global dummy_count
     #global dummy_list
     if request.headers['Content-Type']== 'application/json':
-        # print(1)
         log = request.data.decode('utf-8')
-        #print("curlc:",log,type(log))
+        json_log = json.loads(log)
+        print("curlc:",log,type(log))
+        print("json_log:",json_log,type(log))
+
+        # # zeromq broker 연결
+        # context = zmq.Context()
+        # socket = context.socket(zmq.PUB)
+        # socket.connect(config['zmq_broker_pub'])
+        # topic = config['pub_topic']
 
         if log is not None:
-            curlc_data = '%s|%s' % (topic, log)
-            socket.send(curlc_data.encode('ascii'))
-            logging.info(curlc_data.encode('ascii'))
+            # curlc_data = '%s|%s' % (topic, json_log)
+            # socket.send_string(str(curlc_data))
+            mqtt.send_message(config['pub_topic'],json_log)
+            logging.info('broker send:%s'%json_log)
+
     return ''
 
 
 if __name__ == '__main__':
     with open(config['pid_file'], "w") as f:
         f.write('%s' % os.getpid())
-    # zeromq broker 연결
-    context = zmq.Context()
-    socket = context.socket(zmq.PUB)
-    socket.connect(config['zmq_broker_pub'])
-    topic = config['pub_topic']
+    # # zeromq broker 연결
+    # context = zmq.Context()
+    # socket = context.socket(zmq.PUB)
+    # socket.connect(config['zmq_broker_pub'])
+    # topic = config['pub_topic']
+
+    mqtt = MQTTClient(config['mqtt_ip'],config['mqtt_port'])
 
     app.run(host='0.0.0.0',port=8008)

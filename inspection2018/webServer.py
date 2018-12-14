@@ -24,11 +24,17 @@ def index():
         db = DB_func.MySQLSet()
         sql = "SELECT * FROM gps_log ORDER BY time DESC LIMIT 10"
         log_list = db.selectGPS(sql)
+        print(log_list)
         if log_list is not None:
             #cpn_str = ''.join(str(e) for e in log_list)
             #print(log_list)
-            cpn_dict = {'items': log_list}
-            #print("index:",cpn_dict)
+            for i in range(len(log_list)):
+                time="%s-%s-%s %s:%s:%s"%(log_list[i]['time'].year,log_list[i]['time'].month,log_list[i]['time'].day,log_list[i]['time'].hour,log_list[i]['time'].minute,log_list[i]['time'].second)
+                print(log_list[i],time)
+                log_list[i].update({'time':time})
+
+            cpn_dict={'item':log_list}
+            print("index:",cpn_dict)
             #logging.info('index: %s' % str(cpn_dict))
 
         db.closeDB()
@@ -72,14 +78,14 @@ def parseJSON(data):
     log = data
     cpn_list = []
 
-    #print(len(log),log)
+    print(len(log),log)
     # for util_pkt_logger
-    time = log[1:20]
-    tag_id = log[21:25]
+    #time = log[1:20]
+    #tag_id = log[21:25]
 
     # full data
-    temp_lat = log[25:35]
-    temp_lon = log[35:-1]
+    #temp_lat = log[25:35]
+    #temp_lon = log[35:-1]
 
     # for lora_receiver
     # time = log[1:20]
@@ -88,6 +94,14 @@ def parseJSON(data):
     # # full data
     # temp_lat = log[23:33]
     # temp_lon = log[33:-2]
+
+    # for dummy_data
+    time = log[0:19]
+    tag_id = log[20:22]
+
+    # full data
+    temp_lat = log[22:32]
+    temp_lon = log[32:-1]
     lat = getLatLon(temp_lat)
     lon = getLatLon(temp_lon)
 
